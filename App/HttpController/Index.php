@@ -14,6 +14,7 @@ use App\Model\GroupMemberModel;
 use App\Model\UserModel;
 use App\Utility\Pool\RedisObject;
 use App\Utility\Pool\RedisPool;
+use App\Utility\Pool\MysqlPool;
 
 use EasySwoole\Validate\Validate;
 use EasySwoole\VerifyCode\Conf;
@@ -125,25 +126,37 @@ class Index extends Base
                     'sign' => $params['sign'],
                 ];
 
+                // 开启事务
+                $db = $UserModel->getDb();
+                $db->startTransaction();
+
                 $user_id = $UserModel->insertUser($data);
                 if (!$user_id) {
-                    return $this->json(10001,'注册失败');
+                    return $this->writeJson(10001,'注册失败');
                 }
 
                 $FriendGroupModel = new FriendGroupModel();
-                $FriendGroupModel->insertFriendGroup([
+                $res_fg = $FriendGroupModel->insertFriendGroup([
                     'user_id' => $user_id,
                     'groupname' => '默认分组'
                 ]);
 
                 $GroupMemberModel = new GroupMemberModel();
-                $GroupMemberModel->insertGroupMember([
+                $res_gm = $GroupMemberModel->insertGroupMember([
                     'user_id' => $user_id,
                     'group_id' => 10001
                 ]);
 
+                if($user_id && $res_fg && $res_gm){
+                    $db->commit();
+                    return $this->writeJson(200, '注册成功');
+                }else{
+                    $db->rollback();
+                    return $this->writeJson(10001, '注册失败');
+                }
 
-                return $this->writeJson(200, '注册成功');
+
+                
             } else {
                 return $this->writeJson(10001, $validate->getError()->__toString(), 'fail');
             }

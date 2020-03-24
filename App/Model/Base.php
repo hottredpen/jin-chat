@@ -32,7 +32,7 @@ class Base
 
     }
 
-    protected function getDb():MysqlObject
+    public function getDb():MysqlObject
     {
         return $this->db;
     }

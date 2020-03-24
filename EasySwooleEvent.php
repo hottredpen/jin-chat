@@ -90,7 +90,29 @@ class EasySwooleEvent implements Event
 
     public static function onRequest(Request $request, Response $response): bool
     {
-        // TODO: Implement onRequest() method.
+        $allow_origin = array(
+            "http://easyswoole.test",
+            "http://192.168.23.128",
+        );
+
+        $origin = $request->getHeader('origin');
+
+        if ($origin !== []){
+            $origin = $origin[0];
+            if(in_array($origin, $allow_origin)){
+                $response->withHeader('Access-Control-Allow-Origin', $origin);
+                $response->withHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+                $response->withHeader('Access-Control-Allow-Credentials', 'true');
+                $response->withHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, token');
+                if ($request->getMethod() === 'OPTIONS') {
+                    $response->withStatus(Status::CODE_OK);
+                    return false;
+                }
+            }
+        }
+
+        // $response->withHeader('Content-type', 'application/json;charset=utf-8');
+
         return true;
     }
 

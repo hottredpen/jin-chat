@@ -135,6 +135,7 @@
                 clearInterval(ping)
             }
             layim.on('sendMessage', function(res){
+                console.log('layim sendMessage',res);
                 var mine = res.mine; //包含我发送的消息及我的信息
                 var to = res.to; //对方的信息
                 res.token =  storage.getItem('token'); //token

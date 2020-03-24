@@ -36,8 +36,8 @@ return [
         'host' => '127.0.0.1',//防止报错,就不切换数据库了
         'port' => '3306',
         'user' => 'root',//数据库用户名
-        'password' => '',//数据库密码
-        'database' => 'chat',//数据库
+        'password' => 'rootroot',//数据库密码
+        'database' => 'sxlive',//数据库
         'timeout' => '5',
         'charset' => 'utf8',
         'POOL_MAX_NUM' => '6',

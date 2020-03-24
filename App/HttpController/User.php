@@ -239,6 +239,7 @@ class User extends Base
                     ->orderBy('time','DESC')
                     ->get('chat_record as cr',[($page-1)*20,20],'u.nickname as username,u.id,u.avatar,time as timestamp,cr.content');
             } else {
+                $count = 0;
                 $list = $db
                     ->join('user as u','u.id = cr.user_id')
                     ->where('cr.user_id',$user['id'])

@@ -11,7 +11,7 @@ namespace App\WebSocket;
 use App\Utility\Pool\MysqlPool;
 use App\Utility\Pool\RedisPool;
 use EasySwoole\EasySwoole\ServerManager;
-use EasySwoole\EasySwoole\Swoole\Task\TaskManager;
+use EasySwoole\EasySwoole\Task\TaskManager;
 use EasySwoole\FastCache\Cache;
 use EasySwoole\Socket\AbstractInterface\Controller;
 
@@ -64,6 +64,7 @@ class Index extends Controller
             $server = ServerManager::getInstance()->getSwooleServer();
 
             $fd = Cache::getInstance()->get('uid' . $info['to']['id']);//获取接受者fd
+            // print_r($fd);
             if ($fd == false) {
                 //这里说明该用户已下线，日后做离线消息用
                 $offline_message = [
@@ -104,7 +105,8 @@ class Index extends Controller
                 ->get('group_member as gm', null, 'u.id');
 
             // 异步推送
-            TaskManager::async(function () use ($list, $user, $data) {
+            $task = TaskManager::getInstance();
+            $task->async(function () use ($list, $user, $data) {
                 $server = ServerManager::getInstance()->getSwooleServer();
                 $db = MysqlPool::defer();
 

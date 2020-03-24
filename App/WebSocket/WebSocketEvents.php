@@ -84,11 +84,11 @@ class WebSocketEvents
         if ($offline_messgae){
             foreach ($offline_messgae as $k=>$v) {
 
-                $fd = Cache::getInstance()->get('uid'.$user['id']);//获取接受者fd
-                if ($fd){
-                    $server->push($fd['value'], $v['data']);//发送消息
+                // $fd = Cache::getInstance()->get('uid'.$user['id']);//获取接受者fd
+                // if ($fd){
+                    $server->push($request->fd, $v['data']);//发送消息
                     $db->where('id', $v['id'])->update('offline_message',['status' => 1]);
-                }
+                // }
             }
         }
         $server->push($request->fd, json_encode($data));
